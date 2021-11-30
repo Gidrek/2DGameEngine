@@ -42,6 +42,14 @@ void Game::Setup()
         return;
     }
 
+	int imgFlags = IMG_INIT_PNG;
+	if( !( IMG_Init( imgFlags ) & imgFlags ) )
+	{
+		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+		return;
+	}
+
+
     mWindow = SDL_CreateWindow(
             "2D Game Engine",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -92,8 +100,16 @@ void Game::Update(float dt)
 
 void Game::Render()
 {
+	SDL_SetRenderDrawColor(mRenderer, 33, 33, 33, 255);
     SDL_RenderClear(mRenderer);
-    SDL_SetRenderDrawColor(mRenderer, 33, 33, 33, 255);
 
+	SDL_Surface* surface = IMG_Load("Assets/images/tank-tiger-right.png");
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+	SDL_FreeSurface(surface);
+
+	SDL_Rect dest = {10, 10, 32, 32};
+	SDL_RenderCopy(mRenderer, texture, nullptr, &dest);
+
+	SDL_DestroyTexture(texture);
     SDL_RenderPresent(mRenderer);
 }
